@@ -38,4 +38,8 @@ export const messageCommon = {
   ID_DESC: 'ID único do recurso (UUID)',
   ID_EXAMPLE_USER: '2f8bb5ce-f379-48da-ace6-f52be34c2808',
   ID_EXAMPLE_TASK: '3a1d5e24-6f64-45c0-9d8b-df50e2f89ab1',
+
+  // Unauthorized
+  UNAUTHORIZED_STATUS_DESC: 'Código de status HTTP para acesso não autorizado.',
+  UNAUTHORIZED_MESSAGE: 'Unauthorized',
 };

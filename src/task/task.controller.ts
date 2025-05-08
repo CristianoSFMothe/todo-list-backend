@@ -6,13 +6,19 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entity/task.entity';
 import { UuidValidationPipe } from '@/common/interceptors/uuid-validation.pipe';
 import { UpdateDescriptionDto } from './dto/update-description-task.dto';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { taskMessage } from '@/common/swagger/message/task/task.messages';
 import { Conflict } from '@/common/swagger/conflict.swagger';
 import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
@@ -21,12 +27,15 @@ import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
 import { UpdateStatsDto } from './dto/update-status-task.dto';
 import { BadRequestTaskSwagger } from '@/common/swagger/bad-request-task.swagger';
 import { DeleteSwagger } from '@/common/swagger/delete-task.swagger';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Cria uma nova tarefa' })
   @ApiResponse({
     status: 201,
@@ -48,6 +57,8 @@ export class TaskController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Lista todas as tarefas' })
   @ApiResponse({
     status: 200,
@@ -60,6 +71,8 @@ export class TaskController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Lista um usuário por ID' })
   @ApiResponse({
     description: 'Retorna um usuário especifico pelo seu ID',
@@ -85,6 +98,8 @@ export class TaskController {
   }
 
   @Patch(':id/description')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualiza a descrição de uma tarefa' })
   @ApiResponse({
     status: 200,
@@ -115,6 +130,8 @@ export class TaskController {
   }
 
   @Patch(':id/status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualiza o status da tarefa' })
   @ApiResponse({
     status: 200,
@@ -132,6 +149,8 @@ export class TaskController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Deletar tarefa' })
   @ApiResponse({
     status: 200,
