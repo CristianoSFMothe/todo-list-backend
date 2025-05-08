@@ -8,6 +8,7 @@ import {
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskStatus } from './enum/task-status.enum';
 import { UpdateDescriptionDto } from './dto/update-description-task.dto';
+import { taskMessage } from '@/common/swagger/message/task/task.messages';
 
 @Injectable()
 export class TaskService {
@@ -21,7 +22,7 @@ export class TaskService {
     });
 
     if (existingTask) {
-      throw new ConflictException('Título da tarefa já existe.');
+      throw new ConflictException(taskMessage.TASK_TITLE_ALREADY_EXISTS);
     }
 
     const task = await this.prisma.task.create({
@@ -64,7 +65,7 @@ export class TaskService {
     });
 
     if (!task) {
-      throw new NotFoundException('Tarefa não encontrada');
+      throw new NotFoundException(taskMessage.TASK_NOT_FOUND);
     }
 
     return task;
@@ -81,7 +82,7 @@ export class TaskService {
     });
 
     if (!task) {
-      throw new NotFoundException('Task not found');
+      throw new NotFoundException(taskMessage.TASK_NOT_FOUND);
     }
 
     const updatedTask = await this.prisma.task.update({
@@ -106,13 +107,11 @@ export class TaskService {
     });
 
     if (!task) {
-      throw new NotFoundException('Tarefa não encontrada');
+      throw new NotFoundException(taskMessage.TASK_NOT_FOUND);
     }
 
     if (task.status !== TaskStatus.PENDING) {
-      throw new BadRequestException(
-        'Somente tarefas com status PENDENTE podem ser atualizadas para CONCLUÍDA',
-      );
+      throw new BadRequestException(taskMessage.TASK_STATUS_INVALID_TRANSITION);
     }
 
     const updatedTask = await this.prisma.task.update({
@@ -135,19 +134,17 @@ export class TaskService {
     });
 
     if (!task) {
-      throw new NotFoundException('Tarefa não encontrada');
+      throw new NotFoundException(taskMessage.TASK_NOT_FOUND);
     }
 
     if (task.status === 'DONE') {
-      throw new BadRequestException(
-        'Não é permitido excluir tarefas com status CONCLUÍDA (DONE)',
-      );
+      throw new BadRequestException(taskMessage.TASK_DELETE_INVALID_TRANSITION);
     }
 
     await this.prisma.task.delete({
       where: { id },
     });
 
-    return { message: 'Tarefa excluída com sucesso' };
+    return { message: taskMessage.TASK_DELETE_SUCCESS };
   }
 }

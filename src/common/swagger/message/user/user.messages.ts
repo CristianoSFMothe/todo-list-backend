@@ -1,0 +1,23 @@
+export const userMessage = {
+  USER_ID_DESC:
+    'Identificador único do usuário, gerado automaticamente como UUID para cada usuário.',
+  USER_NAME: 'Nome completo do usuário',
+  USER_EMAIL: 'Email único do usuário, utilizado para login e comunicação.',
+  USER_PASSWORD: 'Senha do usuário, necessária para autenticação no sistema.',
+  EMAIL_ALREADY_EXISTS: 'E-mail já está em uso.',
+  USER_NOT_FOUND: 'Usuário não encontrado ou não existe.',
+  CREATE_USER_SUCCESS: 'Usuário criado com sucesso.',
+  LIST_USERS: 'Listar todos os usuários',
+  LIST_USERS_SUCCESS: 'Lista de usuários retornada com sucesso.',
+  LIST_USER: 'Usuário encontrado com sucesso.',
+  NAME_REQUIRED: 'O nome é obrigatório.',
+  NAME_INVALID: 'O nome deve ser preenchido corretamente.',
+  EMAIL_REQUIRED: 'O e-mail é obrigatório.',
+  EMAIL_INVALID: 'Informe um e-mail válido.',
+  PASSWORD_REQUIRED: 'A senha é obrigatória.',
+  PASSWORD_MIN_LENGTH: 'A senha deve ter no mínimo 6 caracteres.',
+  PASSWORD_UPPERCASE: 'A senha deve conter ao menos uma letra maiúscula.',
+  PASSWORD_LOWERCASE: 'A senha deve conter ao menos uma letra minúscula.',
+  PASSWORD_NUMBER: 'A senha deve conter ao menos um número.',
+  PASSWORD_SPECIAL_CHAR: 'A senha deve conter ao menos um caractere especial.',
+};
