@@ -63,7 +63,6 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(userMessage.USER_NOT_FOUND);
     }
-
     return user;
   }
 }
