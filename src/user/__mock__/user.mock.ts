@@ -23,3 +23,9 @@ export const usersListMock = [
     updatedAt: new Date(),
   },
 ];
+
+export const userPublicMock = {
+  id: 'f48f8a16-bea8-47ff-b204-51d40c9cb1da',
+  name: 'Cristiano',
+  email: 'cristiano3@email.com',
+};
