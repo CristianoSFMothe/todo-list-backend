@@ -9,13 +9,17 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskStatus } from './enum/task-status.enum';
 import { UpdateDescriptionDto } from './dto/update-description-task.dto';
 import { taskMessage } from '@/common/swagger/message/task/task.messages';
+import { UserService } from '@/user/user.service';
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async createTask(createTaskDto: CreateTaskDto): Promise<any> {
-    const { title, description } = createTaskDto;
+    const { title, description, userId } = createTaskDto;
 
     const existingTask = await this.prisma.task.findUnique({
       where: { title },
@@ -25,17 +29,27 @@ export class TaskService {
       throw new ConflictException(taskMessage.TASK_TITLE_ALREADY_EXISTS);
     }
 
+    await this.userService.listUserById(userId);
+
     const task = await this.prisma.task.create({
       data: {
         title,
         description,
         status: TaskStatus.PENDING,
+        userId,
       },
       select: {
         id: true,
         title: true,
         description: true,
         status: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -49,6 +63,13 @@ export class TaskService {
         title: true,
         description: true,
         status: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
   }
@@ -61,6 +82,13 @@ export class TaskService {
         title: true,
         description: true,
         status: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -95,6 +123,13 @@ export class TaskService {
         title: true,
         description: true,
         status: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -122,6 +157,13 @@ export class TaskService {
       select: {
         id: true,
         status: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
