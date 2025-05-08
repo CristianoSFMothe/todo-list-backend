@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { userMessage } from '@/common/swagger/message/user/user.messages';
 
 @Injectable()
 export class UserService {
@@ -19,7 +20,7 @@ export class UserService {
     });
 
     if (existingUser) {
-      throw new ConflictException('E-mail já cadastrado.');
+      throw new ConflictException(userMessage.EMAIL_ALREADY_EXISTS);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -60,9 +61,8 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('Usuário não encontrado.');
+      throw new NotFoundException(userMessage.USER_NOT_FOUND);
     }
-
     return user;
   }
 }
