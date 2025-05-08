@@ -31,4 +31,10 @@ export class Task {
   status: TaskStatus;
   createdAt: Date;
   updatedAt: Date;
+
+  @ApiProperty({
+    description: taskMessage.TASK_USER_ID_DESC,
+    example: taskMessage.TASK_USER_ID_EXAMPLE,
+  })
+  userId: string;
 }

@@ -1,14 +1,21 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UuidValidationPipe } from '@/common/interceptors/uuid-validation.pipe';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { Conflict } from '@/common/swagger/conflict.swagger';
 import { messageCommon } from '@/common/swagger/message/message-common';
 import { userMessage } from '@/common/swagger/message/user/user.messages';
 import { NotFoundSwagger } from '@/common/swagger/not-found.swagger';
 import { BadRequestSwagger } from '@/common/swagger/bad-request.swagger';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 
 @ApiTags('Usuários')
 @Controller('users')
@@ -37,6 +44,8 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Lista todos os usuários' })
   @ApiResponse({
     description: 'Retorna uma lista de usuários cadastrados',
@@ -49,6 +58,8 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Lista um usuário por ID' })
   @ApiResponse({
     description: 'Retorna um usuário especifico pelo seu ID',

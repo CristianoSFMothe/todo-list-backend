@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -36,4 +37,12 @@ export class CreateTaskDto {
     message: taskMessage.TASK_STATUS_INVALID,
   })
   status?: TaskStatus.PENDING;
+
+  @ApiProperty({
+    description: taskMessage.TASK_USER_ID_DESC,
+    example: taskMessage.TASK_USER_ID_EXAMPLE,
+  })
+  @IsNotEmpty({ message: taskMessage.TASK_USER_ID_REQUIRED })
+  @IsUUID(undefined, { message: taskMessage.TASK_USER_ID_INVALID })
+  userId: string;
 }

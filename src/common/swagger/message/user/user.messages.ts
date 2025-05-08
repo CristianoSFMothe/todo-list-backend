@@ -20,4 +20,6 @@ export const userMessage = {
   PASSWORD_LOWERCASE: 'A senha deve conter ao menos uma letra minúscula.',
   PASSWORD_NUMBER: 'A senha deve conter ao menos um número.',
   PASSWORD_SPECIAL_CHAR: 'A senha deve conter ao menos um caractere especial.',
+  INVALID_PASSWORD_OR_EMAIL:
+    'E-mail ou senha inválidos. Verifique suas credenciais.',
 };
