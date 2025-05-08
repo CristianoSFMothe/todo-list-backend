@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ConflictException } from '@nestjs/common';
-import { createUserDtoMock, userEntityMock } from '../__mock__/user.mock';
+import {
+  createUserDtoMock,
+  userEntityMock,
+  usersListMock,
+} from '../__mock__/user.mock';
 import * as bcrypt from 'bcrypt';
 
-describe('UserService - createUser', () => {
+describe('UserService', () => {
   let service: UserService;
   let prisma: PrismaService;
 
@@ -19,6 +24,7 @@ describe('UserService - createUser', () => {
             user: {
               findUnique: jest.fn(),
               create: jest.fn(),
+              findMany: jest.fn(),
             },
           },
         },
@@ -29,27 +35,49 @@ describe('UserService - createUser', () => {
     prisma = module.get<PrismaService>(PrismaService);
   });
 
-  it('should throw ConflictException if email already exists', async () => {
-    jest
-      .spyOn(prisma.user, 'findUnique')
-      .mockResolvedValue(userEntityMock as any);
+  describe('createUser', () => {
+    it('should throw ConflictException if email already exists', async () => {
+      jest
+        .spyOn(prisma.user, 'findUnique')
+        .mockResolvedValue(userEntityMock as any);
 
-    await expect(service.createUser(createUserDtoMock)).rejects.toThrow(
-      ConflictException,
-    );
+      await expect(service.createUser(createUserDtoMock)).rejects.toThrow(
+        ConflictException,
+      );
+    });
+
+    it('should create and return a new user without the password', async () => {
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashed-password' as never);
+      jest
+        .spyOn(prisma.user, 'create')
+        .mockResolvedValue(userEntityMock as any);
+
+      const result = await service.createUser(createUserDtoMock);
+
+      expect(result).toEqual({
+        id: userEntityMock.id,
+        name: userEntityMock.name,
+        email: userEntityMock.email,
+      });
+    });
   });
 
-  it('should create and return a new user without the password', async () => {
-    jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
-    jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashed-password' as never);
-    jest.spyOn(prisma.user, 'create').mockResolvedValue(userEntityMock as any);
+  describe('listAllUsers', () => {
+    it('should return all users with selected fields', async () => {
+      jest.spyOn(prisma.user, 'findMany').mockResolvedValue(usersListMock);
 
-    const result = await service.createUser(createUserDtoMock);
+      const result = await service.listAllUsers();
 
-    expect(result).toEqual({
-      id: userEntityMock.id,
-      name: userEntityMock.name,
-      email: userEntityMock.email,
+      expect(prisma.user.findMany).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+
+      expect(result).toEqual(usersListMock);
     });
   });
 });

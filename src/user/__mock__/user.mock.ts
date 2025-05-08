@@ -1,12 +1,23 @@
-export const createUserDtoMock = {
-  name: 'Cristiano',
-  email: 'cristiano@email.com',
-  password: 'Abc@123',
-};
-
 export const userEntityMock = {
-  id: '3a1d5e24-6f64-45c0-9d8b-df50e2f89ab1',
+  id: 'f48f8a16-bea8-47ff-b204-51d40c9cb1da',
   name: 'Cristiano',
-  email: 'cristiano@email.com',
+  email: 'cristiano3@email.com',
   password: 'hashed-password',
 };
+
+export const createUserDtoMock = {
+  name: 'Cristiano',
+  email: 'cristiano3@email.com',
+  password: '123456',
+};
+
+export const usersListMock = [
+  {
+    id: 'f48f8a16-bea8-47ff-b204-51d40c9cb1da',
+    name: 'Cristiano',
+    email: 'cristiano3@email.com',
+    password: 'hashed-password',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
