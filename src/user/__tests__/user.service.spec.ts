@@ -2,13 +2,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import {
   createUserDtoMock,
   userEntityMock,
   usersListMock,
 } from '../__mock__/user.mock';
 import * as bcrypt from 'bcrypt';
+import { userMessage } from '@/common/swagger/message/user/user.messages';
 
 describe('UserService', () => {
   let service: UserService;
@@ -78,6 +79,33 @@ describe('UserService', () => {
       });
 
       expect(result).toEqual(usersListMock);
+    });
+  });
+
+  describe('listUserById', () => {
+    it('should return a user when found by ID', async () => {
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(userEntityMock);
+
+      const result = await service.listUserById(userEntityMock.id);
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { id: userEntityMock.id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+
+      expect(result).toEqual(userEntityMock);
+    });
+
+    it('should throw NotFoundException if user is not found', async () => {
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
+
+      await expect(
+        service.listUserById('non-existent-id'),
+      ).rejects.toThrowError(new NotFoundException(userMessage.USER_NOT_FOUND));
     });
   });
 });

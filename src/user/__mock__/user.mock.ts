@@ -3,6 +3,8 @@ export const userEntityMock = {
   name: 'Cristiano',
   email: 'cristiano3@email.com',
   password: 'hashed-password',
+  createdAt: new Date('2024-01-01T00:00:00Z'),
+  updatedAt: new Date('2024-01-02T00:00:00Z'),
 };
 
 export const createUserDtoMock = {
