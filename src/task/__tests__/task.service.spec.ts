@@ -4,13 +4,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TaskService } from '../task.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../../user/user.service';
+import { ConflictException } from '@nestjs/common';
 import {
   createTaskDtoMock,
   existingTaskMock,
-  taskEntityMock,
   taskCreateMock,
+  taskEntityMock,
+  taskListMock,
+  taskListMockResponse,
 } from '../__mock__/task.mock';
-import { ConflictException } from '@nestjs/common';
 
 describe('TaskService', () => {
   let service: TaskService;
@@ -27,6 +29,7 @@ describe('TaskService', () => {
             task: {
               findUnique: jest.fn(),
               create: jest.fn(),
+              findMany: jest.fn(), // Adicionamos findMany ao mock para listagem
             },
           },
         },
@@ -82,6 +85,26 @@ describe('TaskService', () => {
 
       expect(result).toEqual(taskEntityMock);
       expect(prisma.task.create).toHaveBeenCalledWith(taskCreateMock);
+    });
+  });
+
+  describe('listAll', () => {
+    it('should return a list of tasks', async () => {
+      jest.spyOn(prisma.task, 'findMany').mockResolvedValue(taskListMock);
+
+      const result = await service.listAll();
+
+      expect(result).toEqual(taskListMock); // Verifica se a lista retornada é a mesma do mock
+      expect(prisma.task.findMany).toHaveBeenCalledWith(taskListMockResponse); // Verifica os parâmetros passados para o Prisma
+    });
+
+    it('should return an empty list if no tasks exist', async () => {
+      jest.spyOn(prisma.task, 'findMany').mockResolvedValue([]);
+
+      const result = await service.listAll();
+
+      expect(result).toEqual([]); // Verifica se a lista retornada é vazia
+      expect(prisma.task.findMany).toHaveBeenCalledWith(taskListMockResponse); // Verifica os parâmetros passados para o Prisma
     });
   });
 });
