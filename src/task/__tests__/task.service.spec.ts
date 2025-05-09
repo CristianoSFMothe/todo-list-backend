@@ -1,16 +1,17 @@
-// src/task/__tests__/task.service.spec.ts
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { TaskService } from '../task.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../../user/user.service';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import {
   createTaskDtoMock,
   existingTaskMock,
-  taskEntityMock,
   taskCreateMock,
+  taskEntityMock,
+  taskListMock,
+  taskListMockResponse,
 } from '../__mock__/task.mock';
-import { ConflictException } from '@nestjs/common';
+import { taskMessage } from '@/common/swagger/message/task/task.messages';
 
 describe('TaskService', () => {
   let service: TaskService;
@@ -27,6 +28,7 @@ describe('TaskService', () => {
             task: {
               findUnique: jest.fn(),
               create: jest.fn(),
+              findMany: jest.fn(),
             },
           },
         },
@@ -82,6 +84,60 @@ describe('TaskService', () => {
 
       expect(result).toEqual(taskEntityMock);
       expect(prisma.task.create).toHaveBeenCalledWith(taskCreateMock);
+    });
+  });
+
+  describe('listAll', () => {
+    it('should return a list of tasks', async () => {
+      jest.spyOn(prisma.task, 'findMany').mockResolvedValue(taskListMock);
+
+      const result = await service.listAll();
+
+      expect(result).toEqual(taskListMock);
+      expect(prisma.task.findMany).toHaveBeenCalledWith(taskListMockResponse);
+    });
+
+    it('should return an empty list if no tasks exist', async () => {
+      jest.spyOn(prisma.task, 'findMany').mockResolvedValue([]);
+
+      const result = await service.listAll();
+
+      expect(result).toEqual([]);
+      expect(prisma.task.findMany).toHaveBeenCalledWith(taskListMockResponse);
+    });
+  });
+
+  describe('listById', () => {
+    it('should return the task when the task exists', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(existingTaskMock);
+
+      const result = await service.listById(existingTaskMock.id);
+
+      expect(result).toEqual(existingTaskMock);
+      expect(prisma.task.findUnique).toHaveBeenCalledWith({
+        where: { id: existingTaskMock.id },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+    });
+
+    it('should throw NotFoundException if task does not exist', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
+
+      await expect(service.listById('non-existent-id')).rejects.toThrow(
+        new NotFoundException(taskMessage.TASK_NOT_FOUND),
+      );
     });
   });
 });
