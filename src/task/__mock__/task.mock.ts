@@ -6,27 +6,46 @@ export const createTaskDtoMock = {
   userId: 'user-id-123',
 };
 
-export const taskEntityMock = {
-  id: 'eb400f57-fe00-4f03-b25d-4fc45e6d72a3',
-  title: 'Nova Tarefa 2',
+const baseUser = {
+  id: 'user-id-123',
+  name: 'Cristiano',
+  email: 'cristiano@email.com',
+};
+
+const baseTask = {
+  id: 'task-id-123',
+  title: 'Tarefa Pendente',
   description: 'Descrição da tarefa',
   status: TaskStatus.PENDING,
-  userId: '93507b2b-d842-4fd6-8373-7f996d13a66f',
+  userId: baseUser.id,
   createdAt: new Date('2024-01-01T00:00:00Z'),
   updatedAt: new Date('2024-01-01T00:00:00Z'),
-  user: {
-    id: '93507b2b-d842-4fd6-8373-7f996d13a66f',
-    name: 'Cristiano',
-    email: 'cristiano@email.com',
-  },
+  user: baseUser,
 };
+
+export const taskPendingMock = { ...baseTask };
+
+export const taskDoneMock = {
+  ...baseTask,
+  id: 'task-id-done',
+  title: 'Tarefa Concluída',
+  description: 'Essa tarefa já foi concluída',
+  status: TaskStatus.DONE,
+};
+
+export const taskUpdatedStatusMock = {
+  ...taskPendingMock,
+  status: TaskStatus.DONE,
+};
+
+export const taskEntityMock = { ...taskPendingMock };
 
 export const taskCreateMock = {
   data: {
-    title: 'Task 1',
-    description: 'Description for Task 1',
+    title: createTaskDtoMock.title,
+    description: createTaskDtoMock.description,
     status: TaskStatus.PENDING,
-    userId: 'user-id-123',
+    userId: createTaskDtoMock.userId,
   },
   select: {
     id: true,
@@ -43,23 +62,7 @@ export const taskCreateMock = {
   },
 };
 
-export const taskListMock = [
-  taskEntityMock,
-  {
-    id: 'f8b8a5bb-524f-4b08-a3a3-7fb8e578db6c',
-    title: 'Task 3',
-    description: 'Descrição da tarefa 3',
-    status: TaskStatus.PENDING,
-    userId: '93507b2b-d842-4fd6-8373-7f996d13a66f',
-    createdAt: new Date('2024-01-02T00:00:00Z'),
-    updatedAt: new Date('2024-01-02T00:00:00Z'),
-    user: {
-      id: '93507b2b-d842-4fd6-8373-7f996d13a66f',
-      name: 'Cristiano',
-      email: 'cristiano@email.com',
-    },
-  },
-];
+export const taskListMock = [taskEntityMock, taskDoneMock];
 
 export const taskListMockResponse = {
   select: {
@@ -77,17 +80,9 @@ export const taskListMockResponse = {
   },
 };
 
-export const existingTaskMock = {
-  id: 'eb400f57-fe00-4f03-b25d-4fc45e6d72a3',
-  title: 'Nova Tarefa 2',
-  description: 'Descrição da tarefa',
-  status: TaskStatus.PENDING,
-  userId: '93507b2b-d842-4fd6-8373-7f996d13a66f',
-  createdAt: new Date('2024-01-01T00:00:00Z'),
-  updatedAt: new Date('2024-01-01T00:00:00Z'),
-  user: {
-    id: '93507b2b-d842-4fd6-8373-7f996d13a66f',
-    name: 'Cristiano',
-    email: 'cristiano@email.com',
-  },
+export const existingTaskMock = { ...taskEntityMock };
+
+export const taskMessage = {
+  TASK_NOT_FOUND: 'Tarefa não encontrada.',
+  TASK_STATUS_INVALID_TRANSITION: 'Status da tarefa inválido para transição.',
 };
