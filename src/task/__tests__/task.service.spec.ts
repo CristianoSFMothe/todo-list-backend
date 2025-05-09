@@ -2,16 +2,24 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TaskService } from '../task.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../../user/user.service';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   createTaskDtoMock,
   existingTaskMock,
   taskCreateMock,
+  taskDoneMock,
   taskEntityMock,
   taskListMock,
   taskListMockResponse,
+  taskPendingMock,
+  taskUpdatedStatusMock,
 } from '../__mock__/task.mock';
 import { taskMessage } from '@/common/swagger/message/task/task.messages';
+import { TaskStatus } from '../enum/task-status.enum';
 
 describe('TaskService', () => {
   let service: TaskService;
@@ -29,6 +37,8 @@ describe('TaskService', () => {
               findUnique: jest.fn(),
               create: jest.fn(),
               findMany: jest.fn(),
+              update: jest.fn(),
+              delete: jest.fn(),
             },
           },
         },
@@ -138,6 +148,125 @@ describe('TaskService', () => {
       await expect(service.listById('non-existent-id')).rejects.toThrow(
         new NotFoundException(taskMessage.TASK_NOT_FOUND),
       );
+    });
+  });
+
+  describe('updateStatus', () => {
+    it('should throw NotFoundException if task does not exist', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
+
+      await expect(service.updateStatus('non-existent-id')).rejects.toThrow(
+        new NotFoundException(taskMessage.TASK_NOT_FOUND),
+      );
+    });
+
+    it('should throw BadRequestException if task is not in PENDING status', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskDoneMock);
+
+      await expect(service.updateStatus(taskDoneMock.id)).rejects.toThrow(
+        new BadRequestException(taskMessage.TASK_STATUS_INVALID_TRANSITION),
+      );
+    });
+
+    it('should update task status to DONE and return updated task', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskPendingMock);
+      jest
+        .spyOn(prisma.task, 'update')
+        .mockResolvedValue(taskUpdatedStatusMock);
+
+      const result = await service.updateStatus(taskPendingMock.id);
+
+      expect(result).toEqual(taskUpdatedStatusMock);
+      expect(prisma.task.update).toHaveBeenCalledWith({
+        where: { id: taskPendingMock.id },
+        data: { status: TaskStatus.DONE },
+        select: {
+          id: true,
+          status: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+    });
+  });
+
+  describe('updateDescription', () => {
+    it('should throw NotFoundException if task does not exist', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
+
+      await expect(service.updateStatus('non-existent-id')).rejects.toThrow(
+        new NotFoundException(taskMessage.TASK_NOT_FOUND),
+      );
+    });
+
+    it('should throw BadRequestException if task is not in PENDING status', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskDoneMock);
+
+      await expect(service.updateStatus(taskDoneMock.id)).rejects.toThrow(
+        new BadRequestException(taskMessage.TASK_STATUS_INVALID_TRANSITION),
+      );
+    });
+
+    it('should update task status to DONE and return updated task', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskPendingMock);
+
+      jest
+        .spyOn(prisma.task, 'update')
+        .mockResolvedValue(taskUpdatedStatusMock);
+
+      const result = await service.updateStatus(taskPendingMock.id);
+
+      expect(result).toEqual(taskUpdatedStatusMock);
+      expect(prisma.task.update).toHaveBeenCalledWith({
+        where: { id: taskPendingMock.id },
+        data: { status: TaskStatus.DONE },
+        select: {
+          id: true,
+          status: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+    });
+  });
+
+  describe('deleteTask', () => {
+    it('should throw NotFoundException if task does not exist', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
+
+      await expect(service.deleteTask('non-existent-id')).rejects.toThrow(
+        new NotFoundException(taskMessage.TASK_NOT_FOUND),
+      );
+    });
+
+    it('should throw BadRequestException if task status is DONE', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskDoneMock);
+
+      await expect(service.deleteTask(taskDoneMock.id)).rejects.toThrow(
+        new BadRequestException(taskMessage.TASK_DELETE_INVALID_TRANSITION),
+      );
+    });
+
+    it('should delete the task and return success message', async () => {
+      jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskPendingMock);
+      jest.spyOn(prisma.task, 'delete').mockResolvedValue(taskPendingMock);
+
+      const result = await service.deleteTask(taskPendingMock.id);
+
+      expect(prisma.task.delete).toHaveBeenCalledWith({
+        where: { id: taskPendingMock.id },
+      });
+      expect(result).toEqual({ message: taskMessage.TASK_DELETE_SUCCESS });
     });
   });
 });
