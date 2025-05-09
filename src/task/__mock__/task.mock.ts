@@ -35,3 +35,25 @@ export const existingTaskMock = {
     email: 'cristiano@email.com',
   },
 };
+
+export const taskCreateMock = {
+  data: {
+    title: createTaskDtoMock.title,
+    description: createTaskDtoMock.description,
+    status: TaskStatus.PENDING,
+    userId: createTaskDtoMock.userId,
+  },
+  select: {
+    id: true,
+    title: true,
+    description: true,
+    status: true,
+    user: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    },
+  },
+};

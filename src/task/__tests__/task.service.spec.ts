@@ -4,13 +4,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TaskService } from '../task.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserService } from '../../user/user.service';
-import { ConflictException } from '@nestjs/common';
 import {
   createTaskDtoMock,
   existingTaskMock,
   taskEntityMock,
+  taskCreateMock,
 } from '../__mock__/task.mock';
-import { TaskStatus } from '../enum/task-status.enum';
+import { ConflictException } from '@nestjs/common';
 
 describe('TaskService', () => {
   let service: TaskService;
@@ -70,7 +70,6 @@ describe('TaskService', () => {
 
     it('should create a task and return it', async () => {
       jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
-
       jest.spyOn(userService, 'listUserById').mockResolvedValue({
         id: '93507b2b-d842-4fd6-8373-7f996d13a66f',
         name: 'Cristiano',
@@ -82,28 +81,7 @@ describe('TaskService', () => {
       const result = await service.createTask(createTaskDtoMock);
 
       expect(result).toEqual(taskEntityMock);
-
-      expect(prisma.task.create).toHaveBeenCalledWith({
-        data: {
-          title: createTaskDtoMock.title,
-          description: createTaskDtoMock.description,
-          status: TaskStatus.PENDING,
-          userId: createTaskDtoMock.userId,
-        },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          status: true,
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-      });
+      expect(prisma.task.create).toHaveBeenCalledWith(taskCreateMock);
     });
   });
 });
