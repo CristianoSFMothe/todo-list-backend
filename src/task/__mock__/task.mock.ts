@@ -88,3 +88,7 @@ export const taskMessage = {
   TASK_NOT_FOUND: 'Tarefa não encontrada.',
   TASK_STATUS_INVALID_TRANSITION: 'Status da tarefa inválido para transição.',
 };
+
+export const updateDescriptionDtoMock = {
+  description: 'Descrição atualizada',
+};
