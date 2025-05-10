@@ -84,7 +84,14 @@ describe('UserService', () => {
 
   describe('listUserById', () => {
     it('should return a user when found by ID', async () => {
-      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(userEntityMock);
+      // Mock com as tarefas
+      const userWithTasksMock = {
+        ...userEntityMock,
+        tasks: userEntityMock.tasks,
+      };
+      jest
+        .spyOn(prisma.user, 'findUnique')
+        .mockResolvedValue(userWithTasksMock);
 
       const result = await service.listUserById(userEntityMock.id);
 
@@ -94,18 +101,27 @@ describe('UserService', () => {
           id: true,
           name: true,
           email: true,
+          tasks: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              status: true,
+            },
+          },
         },
       });
 
-      expect(result).toEqual(userEntityMock);
+      // Verifica se o retorno inclui as tarefas
+      expect(result).toEqual(userWithTasksMock);
     });
 
     it('should throw NotFoundException if user is not found', async () => {
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
 
-      await expect(
-        service.listUserById('non-existent-id'),
-      ).rejects.toThrowError(new NotFoundException(userMessage.USER_NOT_FOUND));
+      await expect(service.listUserById('non-existent-id')).rejects.toThrow(
+        new NotFoundException(userMessage.USER_NOT_FOUND),
+      );
     });
   });
 });
