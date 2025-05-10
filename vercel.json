@@ -1,7 +1,15 @@
 {
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
+  "version": 2,
+  "builds": [
+    {
+      "src": "lambda.ts",
+      "use": "@vercel/node"
     }
-  }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "lambda.ts"
+    }
+  ]
 }
