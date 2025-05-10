@@ -1,3 +1,5 @@
+import { TaskStatus } from '@/task/enum/task-status.enum';
+
 export const userEntityMock = {
   id: 'f48f8a16-bea8-47ff-b204-51d40c9cb1da',
   name: 'Cristiano',
@@ -10,7 +12,7 @@ export const userEntityMock = {
       id: '36bad41b-f62f-4d02-833d-b2facdd9487f',
       title: 'Nova Tarefa 1',
       description: 'Descrição da tarefa',
-      status: 'PENDING',
+      status: TaskStatus.PENDING,
     },
   ],
 };
@@ -41,7 +43,7 @@ export const userPublicMock = {
       id: '36bad41b-f62f-4d02-833d-b2facdd9487f',
       title: 'Nova Tarefa 1',
       description: 'Descrição da tarefa',
-      status: 'PENDING',
+      status: TaskStatus.PENDING,
     },
   ],
 };
