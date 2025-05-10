@@ -1,5 +1,3 @@
-// src/task/__mock__/task.mock.ts
-
 import { TaskStatus } from '@prisma/client';
 
 export const createTaskDtoMock = {
@@ -91,4 +89,19 @@ export const taskMessage = {
 
 export const updateDescriptionDtoMock = {
   description: 'Descrição atualizada',
+};
+
+export const updatedTaskMock = {
+  id: taskPendingMock.id,
+  title: taskPendingMock.title,
+  description: updateDescriptionDtoMock.description,
+  status: taskPendingMock.status,
+  createdAt: taskPendingMock.createdAt,
+  updatedAt: taskPendingMock.updatedAt,
+  userId: taskPendingMock.userId,
+  user: {
+    id: 'user-id',
+    name: 'User Name',
+    email: 'user@example.com',
+  },
 };

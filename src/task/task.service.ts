@@ -113,6 +113,11 @@ export class TaskService {
       throw new NotFoundException(taskMessage.TASK_NOT_FOUND);
     }
 
+    // Adicione esta verificação
+    if (task.status !== TaskStatus.PENDING) {
+      throw new BadRequestException(taskMessage.TASK_STATUS_INVALID_TRANSITION);
+    }
+
     const updatedTask = await this.prisma.task.update({
       where: { id },
       data: {
