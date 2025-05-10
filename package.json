@@ -22,7 +22,8 @@
     "test:user:controller": "jest src/user/__tests__/user.controller.spec.ts",
     "test:task:server": "jest src/task/__tests__/task.service.spec.ts",
     "test:task:controller": "jest src/task/__tests__/task.controller.spec.ts",
-    "test:auth:service": "jest src/auth/__tests__/auth.service.spec.ts"
+    "test:auth:service": "jest src/auth/__tests__/auth.service.spec.ts",
+    "test:auth:controller": "jest src/auth/__tests__/auth.controller.spec.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
