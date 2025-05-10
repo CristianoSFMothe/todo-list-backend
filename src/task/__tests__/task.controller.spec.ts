@@ -12,6 +12,8 @@ describe('TaskController', () => {
 
   const mockTaskService = {
     createTask: jest.fn(),
+    listAll: jest.fn(),
+    listById: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -54,6 +56,38 @@ describe('TaskController', () => {
         conflictError,
       );
       expect(service.createTask).toHaveBeenCalledWith(createTaskDtoMock);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return an array of tasks', async () => {
+      mockTaskService.listAll.mockResolvedValue([taskEntityMock]);
+
+      const result = await controller.findAll();
+
+      expect(result).toEqual([taskEntityMock]);
+      expect(service.listAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a task by ID', async () => {
+      mockTaskService.listById.mockResolvedValue(taskEntityMock);
+
+      const result = await controller.findOne(taskEntityMock.id);
+
+      expect(result).toEqual(taskEntityMock);
+      expect(service.listById).toHaveBeenCalledWith(taskEntityMock.id);
+    });
+
+    it('should throw NotFoundException if task not found', async () => {
+      const notFoundError = new Error('Not Found');
+      mockTaskService.listById.mockRejectedValue(notFoundError);
+
+      await expect(controller.findOne(taskEntityMock.id)).rejects.toThrow(
+        notFoundError,
+      );
+      expect(service.listById).toHaveBeenCalledWith(taskEntityMock.id);
     });
   });
 });
