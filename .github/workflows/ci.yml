@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main  
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+    steps:      
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  
+     
+      - name: Install dependencies
+        run: |
+          npm install
+    
+      - name: Run tests
+        run: |
+          npm run test  # Caso use o comando "test" do npm para rodar os testes
+     
+      - name: Build the project
+        run: |
+          npm run build  # Caso precise gerar o build do projeto
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to production
+        run: |
+          # Adicione seu script de deploy aqui
+          # Exemplo:
+          # npm run deploy
