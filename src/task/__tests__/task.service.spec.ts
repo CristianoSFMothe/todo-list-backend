@@ -69,11 +69,9 @@ describe('TaskService', () => {
 
     it('should call listUserById to check if user exists', async () => {
       jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
-      jest.spyOn(userService, 'listUserById').mockResolvedValue({
-        id: '93507b2b-d842-4fd6-8373-7f996d13a66f',
-        name: 'Cristiano',
-        email: 'cristiano@email.com',
-      });
+      jest
+        .spyOn(userService, 'listUserById')
+        .mockResolvedValue(existingTaskMock.user);
 
       await service.createTask(createTaskDtoMock);
 
@@ -84,12 +82,9 @@ describe('TaskService', () => {
 
     it('should create a task and return it', async () => {
       jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
-      jest.spyOn(userService, 'listUserById').mockResolvedValue({
-        id: '93507b2b-d842-4fd6-8373-7f996d13a66f',
-        name: 'Cristiano',
-        email: 'cristiano@email.com',
-      });
-
+      jest
+        .spyOn(userService, 'listUserById')
+        .mockResolvedValue(existingTaskMock.user);
       jest.spyOn(prisma.task, 'create').mockResolvedValue(taskEntityMock);
 
       const result = await service.createTask(createTaskDtoMock);

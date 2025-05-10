@@ -10,6 +10,14 @@ const baseUser = {
   id: 'user-id-123',
   name: 'Cristiano',
   email: 'cristiano@email.com',
+  tasks: [
+    {
+      id: 'task-id-123',
+      title: 'Tarefa Pendente',
+      description: 'Descrição da tarefa',
+      status: TaskStatus.PENDING,
+    },
+  ],
 };
 
 const baseTask = {
