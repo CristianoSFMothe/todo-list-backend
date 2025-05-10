@@ -18,10 +18,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "test:user:server": "jest src/user/__tests__/user.service.spec.ts",
+    "test:user:service": "jest src/user/__tests__/user.service.spec.ts",
     "test:user:controller": "jest src/user/__tests__/user.controller.spec.ts",
-    "test:task:server": "jest src/task/__tests__/task.service.spec.ts",
-    "test:task:controller": "jest src/task/__tests__/task.controller.spec.ts"
+    "test:task:service": "jest src/task/__tests__/task.service.spec.ts",
+    "test:task:controller": "jest src/task/__tests__/task.controller.spec.ts",
+    "test:auth:service": "jest src/auth/__tests__/auth.service.spec.ts",
+    "test:auth:controller": "jest src/auth/__tests__/auth.controller.spec.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -87,7 +89,23 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/__mock__/**",
+      "!**/__mocks__/**"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "src/main.ts",
+      "src/app.module.ts",
+      "src/swagger/swagger.config.ts",
+      "src/auth/auth.module.ts",
+      "src/auth/strategy/jwt.strategy.ts",
+      "src/common/filters/http-exception.filter.ts",
+      "src/common/interceptors/uuid-validation.pipe.ts",
+      "src/prisma/prisma.module.ts",
+      "src/prisma/prisma.service.ts",
+      "src/task/task.module.ts",
+      "src/user/user.module.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",

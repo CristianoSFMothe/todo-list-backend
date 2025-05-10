@@ -17,6 +17,8 @@ import {
   taskListMockResponse,
   taskPendingMock,
   taskUpdatedStatusMock,
+  updateDescriptionDtoMock,
+  updatedTaskMock,
 } from '../__mock__/task.mock';
 import { taskMessage } from '@/common/swagger/message/task/task.messages';
 import { TaskStatus } from '../enum/task-status.enum';
@@ -199,34 +201,38 @@ describe('TaskService', () => {
     it('should throw NotFoundException if task does not exist', async () => {
       jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(null);
 
-      await expect(service.updateStatus('non-existent-id')).rejects.toThrow(
-        new NotFoundException(taskMessage.TASK_NOT_FOUND),
-      );
+      await expect(
+        service.updateDescription('non-existent-id', updateDescriptionDtoMock),
+      ).rejects.toThrow(new NotFoundException(taskMessage.TASK_NOT_FOUND));
     });
 
     it('should throw BadRequestException if task is not in PENDING status', async () => {
       jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskDoneMock);
 
-      await expect(service.updateStatus(taskDoneMock.id)).rejects.toThrow(
+      await expect(
+        service.updateDescription(taskDoneMock.id, updateDescriptionDtoMock),
+      ).rejects.toThrow(
         new BadRequestException(taskMessage.TASK_STATUS_INVALID_TRANSITION),
       );
     });
 
-    it('should update task status to DONE and return updated task', async () => {
+    it('should update task description and return updated task', async () => {
       jest.spyOn(prisma.task, 'findUnique').mockResolvedValue(taskPendingMock);
+      jest.spyOn(prisma.task, 'update').mockResolvedValue(updatedTaskMock);
 
-      jest
-        .spyOn(prisma.task, 'update')
-        .mockResolvedValue(taskUpdatedStatusMock);
+      const result = await service.updateDescription(
+        taskPendingMock.id,
+        updateDescriptionDtoMock,
+      );
 
-      const result = await service.updateStatus(taskPendingMock.id);
-
-      expect(result).toEqual(taskUpdatedStatusMock);
+      expect(result).toEqual(updatedTaskMock);
       expect(prisma.task.update).toHaveBeenCalledWith({
         where: { id: taskPendingMock.id },
-        data: { status: TaskStatus.DONE },
+        data: { description: updateDescriptionDtoMock.description },
         select: {
           id: true,
+          title: true,
+          description: true,
           status: true,
           user: {
             select: {
