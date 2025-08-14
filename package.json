@@ -1,0 +1,23 @@
+{
+  "name": "todo-list-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CristianoSFMothe/todo-list-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CristianoSFMothe/todo-list-backend/issues"
+  },
+  "homepage": "https://github.com/CristianoSFMothe/todo-list-backend#readme",
+  "description": "",
+  "devDependencies": {
+    "cypress": "^13.3.0"
+  }
+}
